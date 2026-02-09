@@ -100,3 +100,26 @@ Scenario
 ```cpp
 http://EC2_IP → Node app
 ```
+
+---
+
+### Steps to install `nginx` in server.
+```bash
+sudo apt update && sudo apt install nginx -y
+# OR You can run one by one
+sudo apt update
+sudo apt install nginx -y
+```
+Verify installation
+```bash
+sudo systemctl status nginx
+```
+Start / enable Nginx (if needed)
+```bash
+sudo systemctl start nginx
+sudo systemctl enable nginx
+```
+Test in browser
+```bash
+http://<EC2_PUBLIC_IP>
+```
