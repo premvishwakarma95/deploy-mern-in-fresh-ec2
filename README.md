@@ -123,3 +123,29 @@ Test in browser
 ```bash
 http://<EC2_PUBLIC_IP>
 ```
+Now Add script to reverse from `IP 80 port To localhost 3000`.
+- Create reverse proxy config (THIS IS THE KEY)
+```bash
+sudo nano /etc/nginx/sites-available/backend
+```
+Paste this 👇
+```nginx
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+Save → Exit (Using clt+o - to save, enter, then cltr+x - to exit)
