@@ -25,6 +25,7 @@ sudo apt install -y nodejs
 node -v
 npm -v
 ```
+If `npm -v` command not works then `sudo apt install npm` run this command.
 
 ---
 
