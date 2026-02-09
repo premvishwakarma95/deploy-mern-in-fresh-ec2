@@ -59,3 +59,43 @@ PORT=3000
 DB_URL=your_db_url
 NODE_ENV=production
 ```
+
+---
+
+## 8️⃣ Run app (testing)
+```bash
+npm start
+# OR
+node index.js
+```
+- At this point, if security group allows the port, the app should open at:
+```bash
+http://EC2_PUBLIC_IP:3000
+```
+
+---
+
+## 9️⃣ Install PM2 (IMPORTANT for production)
+```bash
+sudo npm install -g pm2
+$ or
+npm install -g pm2
+```
+
+---
+
+## 🔟 Start app with PM2
+```bash
+pm2 start index.js --name node-app
+```
+
+---
+
+### (Optional) Use Nginx as reverse proxy
+```bash
+sudo apt install nginx -y
+```
+Scenario
+```cpp
+http://EC2_IP → Node app
+```
