@@ -63,43 +63,90 @@ NODE_ENV=production
 
 ---
 
-## 8️⃣ Run app (testing)
+# Deploy React app
+### (1) Follow Above commands
+### (2) Build React app
 ```bash
-npm start
-# OR
-node index.js
+npm run build
 ```
-- At this point, if security group allows the port, the app should open at:
-```bash
-http://EC2_PUBLIC_IP:3000
-```
-
 ---
-
-## 9️⃣ Install PM2 (IMPORTANT for production)
-```bash
-sudo npm install -g pm2
-$ or
-npm install -g pm2
-```
-
----
-
-## 🔟 Start app with PM2
-```bash
-pm2 start index.js --name node-app
-```
-
----
-
-### (Optional) Use Nginx as reverse proxy
+### (3) Install Nginx
 ```bash
 sudo apt install nginx -y
+nginx -v
 ```
-Scenario
-```cpp
-http://EC2_IP → Node app
+---
+### (4) Create web directory
+```bash
+sudo mkdir -p /var/www/frontend
 ```
+---
+### (5) Copy build files
+```bash
+sudo cp -r build/* /var/www/frontend/
+```
+---
+### (6) Set permissions
+```bash
+sudo chown -R www-data:www-data /var/www/frontend
+sudo chmod -R 755 /var/www/frontend
+```
+---
+### (7) Create Nginx config
+```bash
+sudo nano /etc/nginx/sites-available/frontend
+```
+```nginx
+server {
+    listen 80;
+    server_name _;
+
+    root /var/www/frontend;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
+---
+### (8) Enable site
+```bash
+sudo ln -s /etc/nginx/sites-available/frontend /etc/nginx/sites-enabled/
+sudo rm /etc/nginx/sites-enabled/default
+```
+---
+### (9) Test Nginx config
+```bash
+sudo nginx -t
+```
+---
+### (10) Reload Nginx
+```bash
+sudo systemctl reload nginx
+```
+---
+### ✅ Application Live
+```bash
+http://<SERVER_PUBLIC_IP>
+```
+---
+### Redeploy (after code change)
+```bash
+npm run build
+sudo rm -rf /var/www/frontend/*
+sudo cp -r build/* /var/www/frontend/
+sudo systemctl reload nginx
+```
+---
+### 🧠 Architecture
+```text
+Browser → Nginx → React Build (Static Files)
+```
+
+
+
+
 
 ---
 
