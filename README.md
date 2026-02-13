@@ -108,6 +108,7 @@ server {
         try_files $uri $uri/ /index.html;
     }
 }
+Save → Exit (Using clt+o - to save, enter, then cltr+x - to exit)
 ```
 ---
 ### (8) Enable site
