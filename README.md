@@ -65,6 +65,13 @@ NODE_ENV=production
 
 # Deploy React app
 ### (1) Follow Above commands
+path - /var/www/frontend/ to deploy code or build
+```swift
+/var/www/frontend/
+ ├── dist/
+ │   ├── index.html
+ │   ├── assets/
+```
 ### (2) Build React app
 ```bash
 npm run build
