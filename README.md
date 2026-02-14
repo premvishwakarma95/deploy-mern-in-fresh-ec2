@@ -183,7 +183,7 @@ Now Add script to reverse from `IP 80 port To localhost 3000`.
 ```bash
 sudo nano /etc/nginx/sites-available/backend
 ```
-Paste this 👇
+Paste this 👇 -> this could be change according to url and port so always check it
 ```nginx
 server {
     listen 80;
