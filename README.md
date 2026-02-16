@@ -295,28 +295,6 @@ app.listen(PORT, () => {
 
 ---
 
-## package.json file
-```json
-{
-  "name": "react-pm2-app",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "server": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.19.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.0.0"
-  }
-}
-```
-
 ## 8️⃣ Start Application with PM2
 
 ### Start React (Vite)
