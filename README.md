@@ -151,6 +151,284 @@ sudo systemctl reload nginx
 ```text
 Browser → Nginx → React Build (Static Files)
 ```
+---
+
+# 🚀 Deploy React as a Server using PM2
+
+This guide explains **step-by-step deployment of a React application as a running Node.js server**, managed by **PM2**.
+⚠️ This is **NOT a static build deployment**. React runs as a live server process.
+
+---
+
+## 🧱 Architecture Overview
+
+```
+Browser
+  ↓
+Nginx (Port 80)
+  ↓
+Node.js Server (Port 3000) – PM2
+  ↓
+React (Vite Dev Server – Port 5173)
+```
+
+---
+
+## ✅ Requirements
+
+* Ubuntu 20.04+ VPS / EC2
+* Root or sudo access
+* Domain or server IP
+* Git installed
+
+---
+
+## 1️⃣ Server Setup
+
+### Update System
+
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
+### Install Node.js (LTS)
+
+```bash
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+```
+
+Verify:
+
+```bash
+node -v
+npm -v
+```
+
+---
+
+## 2️⃣ Install PM2
+
+```bash
+sudo npm install -g pm2
+```
+
+---
+
+## 3️⃣ Install Nginx
+
+```bash
+sudo apt install -y nginx
+sudo systemctl start nginx
+sudo systemctl enable nginx
+```
+
+---
+
+## 4️⃣ Create Application Directory
+
+```bash
+sudo mkdir -p /var/www/react-server
+sudo chown -R $USER:$USER /var/www/react-server
+cd /var/www/react-server
+```
+
+---
+
+## 5️⃣ Create React App (Vite)
+
+```bash
+npm create vite@latest .
+```
+
+Choose:
+
+* Framework: **React**
+* Variant: **JavaScript**
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+---
+
+## 6️⃣ Add Node Server (Required)
+
+Create `server.js`:
+
+```js
+import express from "express";
+import { createProxyMiddleware } from "http-proxy-middleware";
+
+const app = express();
+const PORT = 3000;
+
+app.use(
+  "/",
+  createProxyMiddleware({
+    target: "http://localhost:5173",
+    changeOrigin: true,
+    ws: true
+  })
+);
+
+app.listen(PORT, () => {
+  console.log(`React server running on port ${PORT}`);
+});
+```
+
+---
+
+## 7️⃣ Update `package.json`
+
+```json
+{
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "server": "node server.js"
+  }
+}
+```
+
+---
+
+## 8️⃣ Start Application with PM2
+
+### Start React (Vite)
+
+```bash
+pm2 start npm --name react-ui -- run dev
+```
+
+### Start Node Server
+
+```bash
+pm2 start server.js --name react-server
+```
+
+Persist on reboot:
+
+```bash
+pm2 save
+pm2 startup
+```
+
+---
+
+## 9️⃣ Configure Nginx (Public Access)
+
+Create config:
+
+```bash
+sudo nano /etc/nginx/sites-available/react
+```
+
+```nginx
+server {
+    listen 80;
+    server_name YOUR_DOMAIN_OR_IP;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+Enable config:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/react /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+---
+
+## 🔗 Access Application
+
+```
+http://YOUR_SERVER_IP
+```
+
+You should see:
+
+```
+Hello World
+```
+
+---
+
+## 🔄 GitHub Integration (Manual)
+
+```bash
+git init
+git remote add origin YOUR_REPO_URL
+git pull origin main
+```
+
+After updates:
+
+```bash
+git pull
+pm2 restart all
+```
+
+---
+
+## 📊 PM2 Useful Commands
+
+```bash
+pm2 list
+pm2 logs
+pm2 restart react-ui
+pm2 restart react-server
+pm2 stop all
+```
+
+---
+
+## ⚠️ Production Note (Important)
+
+Running React in **dev mode** is suitable for:
+
+* Admin panels
+* Internal tools
+* MVPs
+
+For high-traffic production apps:
+
+* Use **Next.js + PM2**
+* Or **Vite SSR**
+* Or static build with Nginx
+
+---
+
+## ✅ Deployment Summary
+
+✔ React running as server
+✔ Managed by PM2
+✔ Reverse proxied by Nginx
+✔ GitHub compatible
+✔ No static build
+
+---
+
+**Next options available:**
+
+* PM2 `ecosystem.config.js`
+* GitHub auto-deploy (webhook)
+* HTTPS with SSL
+* Convert to Next.js server
+
+Just say **next** 🚀
 
 
 
