@@ -658,6 +658,32 @@ sudo certbot renew --dry-run
 
 ---
 
+## Package.json
+```json
+{
+  "name": "nextjs-app",
+  "version": "1.0.0",
+  "private": true,
+
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint"
+  },
+
+  "dependencies": {
+    "next": "^14.2.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+
+  "engines": {
+    "node": ">=18"
+  }
+}
+```
+---
 ## ⚠️ Production Notes (Important)
 
 ✔ Next.js **must always be built** before restart
@@ -692,56 +718,4 @@ sudo certbot renew --dry-run
 * CI/CD with GitHub Actions
 
 Just tell me **next** and what you want 🔥
-
-
-
-
-
 ---
-
-### Steps to install `nginx` in server.
-```bash
-sudo apt update && sudo apt install nginx -y
-# OR You can run one by one
-sudo apt update
-sudo apt install nginx -y
-```
-Verify installation
-```bash
-sudo systemctl status nginx
-```
-Start / enable Nginx (if needed)
-```bash
-sudo systemctl start nginx
-sudo systemctl enable nginx
-```
-Test in browser
-```bash
-http://<EC2_PUBLIC_IP>
-```
-Now Add script to reverse from `IP 80 port To localhost 3000`.
-- Create reverse proxy config (THIS IS THE KEY)
-```bash
-sudo nano /etc/nginx/sites-available/backend
-```
-Paste this 👇 -> this could be change according to url and port so always check it
-```nginx
-server {
-    listen 80;
-    server_name _;
-
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
-Save → Exit (Using clt+o - to save, enter, then cltr+x - to exit)
